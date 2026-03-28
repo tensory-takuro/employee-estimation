@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
+import { ShieldCheck, Users, Lightbulb, ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
@@ -7,14 +7,20 @@ export default function Home() {
       <div className="w-full max-w-2xl animate-fade-up">
         {/* Logo */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gold/15 border border-gold/25 mb-5 shadow-2xl shadow-gold/10">
-            <TrendingUp size={30} className="text-gold" />
+          {/* アイコン：ガバナンス（ShieldCheck）＋ 施策管理（Lightbulb）の組み合わせ */}
+          <div className="inline-flex items-center justify-center mb-5 relative">
+            <div className="w-20 h-20 rounded-3xl bg-gold/15 border border-gold/25 shadow-2xl shadow-gold/10 flex items-center justify-center">
+              <ShieldCheck size={38} className="text-gold" strokeWidth={1.5} />
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-xl bg-mblue/20 border border-mblue/30 flex items-center justify-center shadow-lg">
+              <Lightbulb size={15} className="text-mblue" strokeWidth={1.5} />
+            </div>
           </div>
-          <h1 className="text-white text-3xl font-bold tracking-widest mb-2 font-outfit">
-            ES Manager
+          <h1 className="text-white text-[28px] font-bold tracking-[0.15em] mb-1.5 font-outfit">
+            ガバスコ施策管理
           </h1>
           <p className="text-white/45 text-sm tracking-wider">
-            Employee Satisfaction Management System
+            Governance × Measure Management
           </p>
         </div>
 
@@ -44,11 +50,11 @@ export default function Home() {
             className="group relative bg-white/[0.04] border border-white/10 rounded-2xl p-7 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-300 block animate-fade-up stagger-2"
           >
             <div className="w-12 h-12 rounded-xl bg-gold/15 flex items-center justify-center border border-gold/20 mb-4">
-              <BarChart3 size={22} className="text-gold" />
+              <ShieldCheck size={22} className="text-gold" strokeWidth={1.5} />
             </div>
             <h2 className="text-white font-bold text-xl mb-2">管理者</h2>
             <p className="text-white/45 text-sm leading-relaxed mb-5">
-              四半期ごとの従業員満足度推移や離職率をダッシュボードで確認。
+              施策管理・満足度ダッシュボード・AI影響分析を一元管理。
             </p>
             <div className="flex items-center gap-2 text-gold text-sm font-medium">
               <span>ダッシュボードへ</span>

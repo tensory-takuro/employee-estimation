@@ -15,8 +15,8 @@ const zenKaku = Zen_Kaku_Gothic_New({
 });
 
 export const metadata: Metadata = {
-  title: "従業員満足度管理 | Employee Satisfaction",
-  description: "四半期ごとの従業員満足度をトラッキングする管理ツール",
+  title: "ガバスコ施策管理",
+  description: "施策管理×従業員満足度・離職率の影響分析ダッシュボード",
 };
 
 export default function RootLayout({

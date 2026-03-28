@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Menu, X, TrendingUp, Lightbulb, FlaskConical } from "lucide-react";
+import { LayoutDashboard, Users, Menu, X, ShieldCheck, Lightbulb, FlaskConical } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
@@ -34,10 +34,10 @@ export default function Sidebar() {
         </button>
         <div className="flex items-center gap-2.5 ml-4">
           <div className="w-7 h-7 rounded-lg bg-gold/20 flex items-center justify-center">
-            <TrendingUp size={14} className="text-gold" />
+            <ShieldCheck size={14} className="text-gold" strokeWidth={1.5} />
           </div>
           <span className="text-white font-bold text-base tracking-widest font-outfit">
-            ES Dashboard
+            ガバスコ施策管理
           </span>
         </div>
       </div>
@@ -58,14 +58,14 @@ export default function Sidebar() {
         <div className="relative z-10 p-7 pb-5">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-gold/15 flex items-center justify-center border border-gold/25 shadow-lg shadow-gold/5">
-              <TrendingUp size={22} className="text-gold" />
+              <ShieldCheck size={22} className="text-gold" strokeWidth={1.5} />
             </div>
             <div>
               <div className="text-white font-bold text-[18px] leading-tight tracking-[0.1em] font-outfit">
-                ES Manager
+                ガバスコ施策管理
               </div>
               <div className="text-gold/60 font-medium text-[10px] leading-tight tracking-[0.2em] uppercase mt-0.5">
-                Employee Satisfaction
+                Governance × Measure
               </div>
             </div>
           </div>

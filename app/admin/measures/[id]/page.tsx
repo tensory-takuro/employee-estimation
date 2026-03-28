@@ -1,15 +1,16 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MEASURES, MEASURE_EFFECTS, SAMPLE_AI_REPORT } from "@/lib/measureData";
+import { MEASURES, MEASURE_EFFECTS } from "@/lib/measureData";
 import { QUARTER_DATA, QUARTERS } from "@/lib/dummyData";
 import { questions } from "@/lib/questions";
 import {
   MEASURE_CATEGORY_LABELS,
   MEASURE_STATUS_LABELS,
   MEASURE_COST_LABELS,
+  MeasureAnalysisReport,
 } from "@/types/measure";
 import {
   MEASURE_STATUS_COLORS,
@@ -17,14 +18,13 @@ import {
   IMPACT_COLORS,
   buildWaterfallData,
 } from "@/lib/measureAnalysis";
-import { CATEGORY_COLORS } from "@/lib/scoring";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, ReferenceLine,
 } from "recharts";
 import {
   ArrowLeft, TrendingUp, TrendingDown, AlertTriangle,
-  CheckCircle2, Clock, User, DollarSign, Target, Sparkles,
+  Clock, User, DollarSign, Target, Sparkles, RefreshCw,
 } from "lucide-react";
 
 export default function MeasureDetailPage({
@@ -37,8 +37,37 @@ export default function MeasureDetailPage({
   if (!measure) notFound();
 
   const effect = MEASURE_EFFECTS.find((e) => e.measureId === id);
-  const aiInsight = SAMPLE_AI_REPORT.measureInsights.find((i) => i.measureId === id);
   const statusStyle = MEASURE_STATUS_COLORS[measure.status];
+
+  // AI分析の状態管理
+  const [aiReport, setAiReport] = useState<MeasureAnalysisReport | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  async function runAiAnalysis() {
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/measure-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          measures: [measure],
+          effects: effect ? [effect] : [],
+          quarterData: QUARTER_DATA,
+        }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data: MeasureAnalysisReport = await res.json();
+      setAiReport(data);
+    } catch (e) {
+      setAiError("AI分析でエラーが発生しました。APIキーを確認してください。");
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  const aiInsight = aiReport?.measureInsights.find((i) => i.measureId === id);
 
   // ウォーターフォール用データ
   const categoryLabels = Object.fromEntries(
@@ -202,19 +231,46 @@ export default function MeasureDetailPage({
 
         {/* AI推察レポート */}
         <div className="bg-white rounded-2xl border border-dark/8 p-6 shadow-sm animate-fade-up stagger-4">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-gold/15 flex items-center justify-center">
-              <Sparkles size={15} className="text-gold" />
+          <div className="flex items-center justify-between gap-2 mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gold/15 flex items-center justify-center">
+                <Sparkles size={15} className="text-gold" />
+              </div>
+              <div>
+                <h3 className="text-dark font-bold text-sm">AI 推察レポート</h3>
+                <p className="text-dark/35 text-[10px]">Gemini による施策効果の分析</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-dark font-bold text-sm">AI 推察レポート</h3>
-              <p className="text-dark/35 text-[10px]">Gemini による分析（サンプル）</p>
-            </div>
+            <button
+              onClick={runAiAnalysis}
+              disabled={aiLoading}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-bold bg-dark text-white hover:bg-navy transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-dark/15"
+            >
+              {aiLoading ? (
+                <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <RefreshCw size={12} />
+              )}
+              {aiLoading ? "分析中..." : aiReport ? "再分析" : "AI分析を実行"}
+            </button>
           </div>
 
-          {aiInsight ? (
+          {aiLoading && (
+            <div className="flex flex-col items-center justify-center py-10 gap-3">
+              <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+              <p className="text-dark/40 text-xs">Gemini が施策データを分析中...</p>
+            </div>
+          )}
+
+          {aiError && !aiLoading && (
+            <div className="flex items-start gap-2 bg-danger/8 rounded-xl p-4">
+              <AlertTriangle size={14} className="text-danger mt-0.5 flex-shrink-0" />
+              <p className="text-danger text-[12px] leading-relaxed">{aiError}</p>
+            </div>
+          )}
+
+          {!aiLoading && !aiError && aiInsight && (
             <div className="space-y-4">
-              {/* 影響度バッジ */}
               <div className="flex items-center gap-2">
                 <span className="text-dark/50 text-xs">影響度評価:</span>
                 <span
@@ -224,45 +280,46 @@ export default function MeasureDetailPage({
                     backgroundColor: `${IMPACT_COLORS[aiInsight.impact]}18`,
                   }}
                 >
-                  {aiInsight.impact === "high"      ? "高"
-                   : aiInsight.impact === "medium"  ? "中"
-                   : aiInsight.impact === "low"     ? "低"
+                  {aiInsight.impact === "high"     ? "高"
+                   : aiInsight.impact === "medium" ? "中"
+                   : aiInsight.impact === "low"    ? "低"
                    : "不確実"}
                 </span>
               </div>
-
-              {/* 推察コメント */}
               <div className="bg-dark/[0.025] rounded-xl p-4">
-                <p className="text-dark/70 text-sm leading-relaxed">
-                  {aiInsight.summary}
-                </p>
+                <p className="text-dark/70 text-sm leading-relaxed">{aiInsight.summary}</p>
               </div>
-
-              {/* 根拠 */}
               <div>
-                <p className="text-dark/40 text-[11px] font-bold tracking-wider uppercase mb-1.5">
-                  根拠となる数値
-                </p>
+                <p className="text-dark/40 text-[11px] font-bold tracking-wider uppercase mb-1.5">根拠となる数値</p>
                 <p className="text-navy text-[12px] font-medium">{aiInsight.evidence}</p>
               </div>
-
-              {/* 交絡因子の注意 */}
+              {aiReport?.recommendations && aiReport.recommendations.length > 0 && (
+                <div>
+                  <p className="text-dark/40 text-[11px] font-bold tracking-wider uppercase mb-2">次期推奨施策</p>
+                  {aiReport.recommendations.slice(0, 2).map((r) => (
+                    <div key={r.priority} className="flex items-center gap-2 mb-1.5">
+                      <span className="w-5 h-5 rounded-md bg-gold/15 text-gold font-bold text-[10px] font-outfit flex items-center justify-center flex-shrink-0">{r.priority}</span>
+                      <p className="text-dark/65 text-[12px]">{r.action}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
               {effect && effect.confoundingMeasures.length > 0 && (
                 <div className="flex items-start gap-2 bg-caution/8 rounded-xl p-3">
                   <AlertTriangle size={14} className="text-caution mt-0.5 flex-shrink-0" />
                   <p className="text-caution text-[11px] leading-relaxed">
-                    同時期に
-                    {effect.confoundingMeasures.length}件の施策が並行実施されているため、
-                    単独効果の切り分けには不確実性があります。
+                    同時期に{effect.confoundingMeasures.length}件の施策が並行実施されているため、単独効果の切り分けには不確実性があります。
                   </p>
                 </div>
               )}
             </div>
-          ) : (
+          )}
+
+          {!aiLoading && !aiError && !aiReport && (
             <div className="text-center py-8">
-              <p className="text-dark/30 text-sm">
-                AI分析データがありません
-              </p>
+              <Sparkles size={28} className="mx-auto mb-3 text-gold/30" />
+              <p className="text-dark/40 text-sm font-medium mb-1">「AI分析を実行」でGeminiが施策効果を分析します</p>
+              <p className="text-dark/25 text-xs">施策データ・満足度推移・離職率変化を総合的に推察</p>
             </div>
           )}
         </div>
