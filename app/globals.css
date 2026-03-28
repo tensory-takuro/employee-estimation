@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark: #0D1B3E;
+  --color-navy: #1E3A5F;
+  --color-lblue: #D6EAF8;
+  --color-mblue: #5DADE2;
+  --color-danger: #CC0000;
+  --color-warning: #EA580C;
+  --color-caution: #D97706;
+  --color-good: #16A34A;
+  --color-gold: #C8A951;
+  --color-warm-white: #F8F7F4;
+  --color-sidebar-hover: rgba(255, 255, 255, 0.06);
+  --color-sidebar-active: rgba(255, 255, 255, 0.10);
+
+  --font-outfit: "Outfit", sans-serif;
+  --font-zen: "Zen Kaku Gothic New", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-zen), "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+nextjs-portal {
+  left: 0px;
+  top: -1px;
+}
+
+.font-outfit {
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.main-content-bg {
+  background-color: var(--color-warm-white);
+  background-image: radial-gradient(circle, rgba(13, 27, 62, 0.035) 0.8px, transparent 0.8px);
+  background-size: 28px 28px;
+}
+
+.hero-pattern {
+  background-color: var(--color-dark);
+  background-image:
+    linear-gradient(30deg, rgba(200, 169, 81, 0.06) 12%, transparent 12.5%, transparent 87%, rgba(200, 169, 81, 0.06) 87.5%),
+    linear-gradient(150deg, rgba(200, 169, 81, 0.06) 12%, transparent 12.5%, transparent 87%, rgba(200, 169, 81, 0.06) 87.5%);
+  background-size: 60px 104px;
+}
+
+.sidebar-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up     { animation: fade-up 0.5s ease-out forwards; }
+.animate-fade-in     { animation: fade-in 0.4s ease-out forwards; }
+.animate-slide-right { animation: slide-in-right 0.45s ease-out forwards; }
+.animate-count-up    { animation: count-up 0.6s ease-out forwards; }
+
+.stagger-1 { animation-delay: 0.05s; opacity: 0; }
+.stagger-2 { animation-delay: 0.10s; opacity: 0; }
+.stagger-3 { animation-delay: 0.15s; opacity: 0; }
+.stagger-4 { animation-delay: 0.20s; opacity: 0; }
+.stagger-5 { animation-delay: 0.25s; opacity: 0; }
+.stagger-6 { animation-delay: 0.30s; opacity: 0; }
