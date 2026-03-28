@@ -5,10 +5,10 @@ import { LayoutDashboard, Users, Menu, X, ShieldCheck, Lightbulb, FlaskConical }
 import { useState } from "react";
 
 const navItems = [
-  { href: "/admin",           label: "ダッシュボード", icon: LayoutDashboard },
-  { href: "/admin/responses", label: "回答一覧",       icon: Users },
   { href: "/admin/measures",  label: "施策管理",        icon: Lightbulb },
   { href: "/admin/analysis",  label: "影響分析",        icon: FlaskConical },
+  { href: "/admin",           label: "ダッシュボード", icon: LayoutDashboard },
+  { href: "/admin/responses", label: "回答一覧",       icon: Users },
 ];
 
 export default function Sidebar() {
