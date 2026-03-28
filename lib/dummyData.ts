@@ -1,4 +1,5 @@
 import { Quarter, QuarterData, SurveySubmission, QuarterKey } from "@/types";
+import { ACTIVE_MEASURES_BY_QUARTER } from "./measureData";
 
 export const QUARTERS: Quarter[] = [
   { key: "FY25_1Q", label: "FY25 1Q", period: "2024年4〜6月" },
@@ -31,6 +32,7 @@ export const QUARTER_DATA: QuarterData[] = [
       environment:       72,
       communication:     63,
     },
+    activeMeasures: ACTIVE_MEASURES_BY_QUARTER["FY25_1Q"],
   },
   {
     quarter: "FY25_2Q",
@@ -51,6 +53,7 @@ export const QUARTER_DATA: QuarterData[] = [
       environment:       74,
       communication:     66,
     },
+    activeMeasures: ACTIVE_MEASURES_BY_QUARTER["FY25_2Q"],
   },
   {
     quarter: "FY25_3Q",
@@ -71,6 +74,7 @@ export const QUARTER_DATA: QuarterData[] = [
       environment:       76,
       communication:     69,
     },
+    activeMeasures: ACTIVE_MEASURES_BY_QUARTER["FY25_3Q"],
   },
   {
     quarter: "FY25_4Q",
@@ -91,6 +95,7 @@ export const QUARTER_DATA: QuarterData[] = [
       environment:       78,
       communication:     72,
     },
+    activeMeasures: ACTIVE_MEASURES_BY_QUARTER["FY25_4Q"],
   },
   {
     quarter: "FY26_1Q",
@@ -111,6 +116,7 @@ export const QUARTER_DATA: QuarterData[] = [
       environment:       80,
       communication:     75,
     },
+    activeMeasures: ACTIVE_MEASURES_BY_QUARTER["FY26_1Q"],
   },
   {
     quarter: "FY26_2Q",
@@ -131,6 +137,7 @@ export const QUARTER_DATA: QuarterData[] = [
       environment:       82,
       communication:     77,
     },
+    activeMeasures: ACTIVE_MEASURES_BY_QUARTER["FY26_2Q"],
   },
 ];
 

@@ -1,12 +1,14 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Menu, X, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Users, Menu, X, TrendingUp, Lightbulb, FlaskConical } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
   { href: "/admin",           label: "ダッシュボード", icon: LayoutDashboard },
   { href: "/admin/responses", label: "回答一覧",       icon: Users },
+  { href: "/admin/measures",  label: "施策管理",        icon: Lightbulb },
+  { href: "/admin/analysis",  label: "影響分析",        icon: FlaskConical },
 ];
 
 export default function Sidebar() {

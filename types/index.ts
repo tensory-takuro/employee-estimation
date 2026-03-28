@@ -32,6 +32,7 @@ export interface QuarterData {
   turnoverRate: number; // %
   respondents: number;
   categoryScores: Record<string, number>; // category id -> 0-100
+  activeMeasures: string[]; // 実施中の施策IDリスト
 }
 
 export interface SurveyAnswer {
