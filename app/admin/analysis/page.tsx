@@ -5,7 +5,6 @@ import { QUARTER_DATA } from "@/lib/dummyData";
 import { MEASURES, MEASURE_EFFECTS, SAMPLE_AI_REPORT } from "@/lib/measureData";
 import { estimateTurnoverImpact, IMPACT_COLORS } from "@/lib/measureAnalysis";
 import { MeasureAnalysisReport } from "@/types/measure";
-import MeasureTimeline from "@/components/admin/MeasureTimeline";
 import CorrelationHeatmap from "@/components/admin/CorrelationHeatmap";
 import {
   FlaskConical, Sparkles, TrendingDown,
@@ -56,124 +55,94 @@ export default function AnalysisPage() {
         </div>
         <div>
           <h1 className="text-dark text-xl font-bold">施策影響分析</h1>
-          <p className="text-dark/45 text-xs">
-            施策と従業員満足度・離職率の相関を多角的に分析
-          </p>
+          <p className="text-dark/45 text-xs">施策と従業員満足度・離職率の相関を多角的に分析</p>
         </div>
       </div>
 
-      {/* 施策タイムライン */}
-      <div className="animate-fade-up stagger-1">
-        <MeasureTimeline data={QUARTER_DATA} measures={MEASURES} />
-      </div>
-
       {/* 相関ヒートマップ */}
-      <div className="animate-fade-up stagger-2">
+      <div className="animate-fade-up stagger-1">
         <CorrelationHeatmap measures={MEASURES} effects={MEASURE_EFFECTS} />
       </div>
 
       {/* 離職率推計 */}
-      <div className="bg-white rounded-2xl border border-dark/8 p-6 shadow-sm animate-fade-up stagger-3">
-        <div className="flex items-center gap-2 mb-5">
-          <TrendingDown size={16} className="text-danger" />
-          <h3 className="text-dark font-bold text-base">離職率への影響推計（線形回帰）</h3>
+      <div className="bg-white rounded-2xl border border-dark/8 p-5 shadow-sm animate-fade-up stagger-2">
+        <div className="flex items-center gap-2 mb-4">
+          <TrendingDown size={15} className="text-danger" />
+          <h3 className="text-dark font-bold text-sm">離職率への影響推計（線形回帰）</h3>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-dark/[0.025] rounded-xl p-4 text-center">
-            <p className="text-dark/40 text-[11px] mb-1">満足度スコア改善幅</p>
-            <p className="text-dark text-3xl font-bold font-outfit">
-              +{scoreDiff}<span className="text-sm text-dark/40 ml-1">pt</span>
-            </p>
-            <p className="text-dark/30 text-[10px] mt-1">FY25 1Q → FY26 2Q</p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-dark/[0.025] rounded-xl p-3 text-center">
+            <p className="text-dark/40 text-[10px] mb-1">満足度改善幅</p>
+            <p className="text-dark text-2xl font-bold font-outfit">+{scoreDiff}<span className="text-xs text-dark/40 ml-1">pt</span></p>
+            <p className="text-dark/30 text-[10px] mt-0.5">FY25 1Q → FY26 2Q</p>
           </div>
-          <div className="bg-dark/[0.025] rounded-xl p-4 text-center">
-            <p className="text-dark/40 text-[11px] mb-1">推計離職率低下</p>
-            <p className="text-danger text-3xl font-bold font-outfit">
-              {regression.estimated}
-              <span className="text-sm text-dark/40 ml-1">%</span>
-            </p>
-            <p className="text-dark/30 text-[10px] mt-1">
-              回帰係数: {regression.coefficient} / R²: {regression.r2}
-            </p>
+          <div className="bg-dark/[0.025] rounded-xl p-3 text-center">
+            <p className="text-dark/40 text-[10px] mb-1">推計離職率低下</p>
+            <p className="text-danger text-2xl font-bold font-outfit">{regression.estimated}<span className="text-xs text-dark/40 ml-1">%</span></p>
+            <p className="text-dark/30 text-[10px] mt-0.5">R²: {regression.r2}</p>
           </div>
-          <div className="bg-dark/[0.025] rounded-xl p-4 text-center">
-            <p className="text-dark/40 text-[11px] mb-1">実測値との乖離</p>
-            <p className="text-caution text-3xl font-bold font-outfit">
-              {(
-                (QUARTER_DATA[QUARTER_DATA.length - 1].turnoverRate -
-                  QUARTER_DATA[0].turnoverRate) -
-                regression.estimated
-              ).toFixed(2)}
-              <span className="text-sm text-dark/40 ml-1">%</span>
+          <div className="bg-dark/[0.025] rounded-xl p-3 text-center">
+            <p className="text-dark/40 text-[10px] mb-1">外部要因による乖離</p>
+            <p className="text-caution text-2xl font-bold font-outfit">
+              {((QUARTER_DATA[QUARTER_DATA.length - 1].turnoverRate - QUARTER_DATA[0].turnoverRate) - regression.estimated).toFixed(2)}
+              <span className="text-xs text-dark/40 ml-1">%</span>
             </p>
-            <p className="text-dark/30 text-[10px] mt-1">外部要因の影響分</p>
+            <p className="text-dark/30 text-[10px] mt-0.5">実測値との差</p>
           </div>
         </div>
-        <p className="text-dark/35 text-[11px] mt-4 bg-dark/[0.02] rounded-xl p-3 leading-relaxed">
-          ⚠️ 線形回帰による統計的推計です。相関関係を示すものであり、因果関係を証明するものではありません。
-          景気変動・競合採用状況など外部要因は考慮されていません。
-        </p>
+        <p className="text-dark/30 text-[10px] mt-3">⚠️ 統計的推計。相関を示すものであり因果関係の証明ではありません。</p>
       </div>
 
       {/* AI総合レポート */}
-      <div className="bg-white rounded-2xl border border-dark/8 shadow-sm overflow-hidden animate-fade-up stagger-4">
-        <div className="bg-gradient-to-r from-dark to-navy p-5">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center">
-                <Sparkles size={16} className="text-gold" />
-              </div>
-              <div>
-                <h3 className="text-white font-bold text-base">AI 総合推察レポート</h3>
-                <p className="text-white/40 text-[11px]">
-                  {isAiGenerated ? "Gemini による最新分析結果" : "Gemini による施策効果の総合分析（サンプル表示中）"}
-                </p>
-              </div>
+      <div className="bg-white rounded-2xl border border-dark/8 shadow-sm overflow-hidden animate-fade-up stagger-3">
+        {/* ヘッダー */}
+        <div className="bg-gradient-to-r from-dark to-navy px-5 py-4 flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gold/20 flex items-center justify-center">
+              <Sparkles size={14} className="text-gold" />
             </div>
-            <button
-              onClick={runAiAnalysis}
-              disabled={aiLoading}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {aiLoading ? (
-                <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <RefreshCw size={12} />
-              )}
-              {aiLoading ? "分析中..." : isAiGenerated ? "再分析" : "AI分析を実行"}
-            </button>
+            <div>
+              <h3 className="text-white font-bold text-sm">AI 総合推察レポート</h3>
+              <p className="text-white/40 text-[10px]">
+                {isAiGenerated ? "Gemini 最新分析" : "サンプル表示中"}
+              </p>
+            </div>
           </div>
-          {aiError && (
-            <div className="flex items-center gap-2 mt-3 bg-danger/20 rounded-xl px-3 py-2">
-              <AlertTriangle size={13} className="text-danger flex-shrink-0" />
-              <p className="text-white/80 text-[11px]">{aiError}</p>
-            </div>
-          )}
-          {aiLoading && (
-            <div className="flex items-center gap-2 mt-3">
-              <div className="w-4 h-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
-              <p className="text-white/50 text-[11px]">Gemini が全施策データを統合分析中...</p>
-            </div>
-          )}
+          <button
+            onClick={runAiAnalysis}
+            disabled={aiLoading}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {aiLoading
+              ? <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              : <RefreshCw size={11} />}
+            {aiLoading ? "分析中..." : isAiGenerated ? "再分析" : "AI分析を実行"}
+          </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* 総合評価 */}
-          <div>
-            <p className="text-dark/40 text-[11px] font-bold tracking-wider uppercase mb-2">
-              総合評価
-            </p>
-            <p className="text-dark/75 text-sm leading-relaxed bg-dark/[0.02] rounded-xl p-4">
-              {report.overallAssessment}
-            </p>
+        {aiError && (
+          <div className="flex items-center gap-2 mx-5 mt-3 bg-danger/8 rounded-xl px-3 py-2">
+            <AlertTriangle size={12} className="text-danger flex-shrink-0" />
+            <p className="text-danger text-[11px]">{aiError}</p>
           </div>
+        )}
+        {aiLoading && (
+          <div className="flex items-center gap-2 px-5 py-3">
+            <div className="w-3.5 h-3.5 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+            <p className="text-dark/40 text-[11px]">Gemini が全施策データを統合分析中...</p>
+          </div>
+        )}
 
-          {/* 施策別評価 */}
+        <div className="p-5 space-y-4">
+          {/* 総合評価（1行サマリー） */}
+          <p className="text-dark/70 text-[13px] leading-relaxed border-l-2 border-gold pl-3">
+            {report.overallAssessment}
+          </p>
+
+          {/* 施策別影響（コンパクト一覧） */}
           <div>
-            <p className="text-dark/40 text-[11px] font-bold tracking-wider uppercase mb-3">
-              施策別影響評価
-            </p>
-            <div className="space-y-3">
+            <p className="text-dark/40 text-[10px] font-bold tracking-wider uppercase mb-2">施策別影響度</p>
+            <div className="divide-y divide-dark/[0.04]">
               {report.measureInsights.map((insight) => {
                 const measure = MEASURES.find((m) => m.id === insight.measureId);
                 if (!measure) return null;
@@ -182,81 +151,48 @@ export default function AnalysisPage() {
                   <Link
                     key={insight.measureId}
                     href={`/admin/measures/${insight.measureId}`}
-                    className="flex items-start gap-3 p-4 rounded-xl border border-dark/6 hover:border-dark/15 hover:bg-dark/[0.015] transition-all group"
+                    className="flex items-center gap-3 py-2.5 hover:bg-dark/[0.015] -mx-1 px-1 rounded-lg transition-colors group"
                   >
-                    <span className="text-lg mt-0.5 flex-shrink-0">
-                      {measure ? measure.name[0] : "?"}
+                    <span
+                      className="text-[11px] font-bold px-2 py-0.5 rounded-md flex-shrink-0 w-8 text-center"
+                      style={{ color, backgroundColor: `${color}15` }}
+                    >
+                      {insight.impact === "high" ? "高" : insight.impact === "medium" ? "中" : insight.impact === "low" ? "低" : "?"}
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-dark font-bold text-[13px]">
-                          {measure?.name}
-                        </span>
-                        <span
-                          className="text-[11px] font-bold px-2 py-0.5 rounded-lg"
-                          style={{ color, backgroundColor: `${color}18` }}
-                        >
-                          影響度:{" "}
-                          {insight.impact === "high"     ? "高"
-                           : insight.impact === "medium" ? "中"
-                           : insight.impact === "low"    ? "低"
-                           : "不確実"}
-                        </span>
-                      </div>
-                      <p className="text-dark/55 text-[12px] leading-relaxed mb-1">
-                        {insight.summary}
-                      </p>
-                      <p className="text-navy text-[11px] font-medium">{insight.evidence}</p>
-                    </div>
-                    <ChevronRight
-                      size={14}
-                      className="text-dark/25 group-hover:text-dark/50 mt-1 flex-shrink-0 transition-colors"
-                    />
+                    <span className="text-dark font-medium text-[12px] flex-shrink-0 w-36 truncate">{measure.name}</span>
+                    <span className="text-dark/50 text-[11px] leading-snug flex-1 min-w-0 truncate">{insight.evidence}</span>
+                    <ChevronRight size={12} className="text-dark/20 group-hover:text-dark/40 flex-shrink-0 transition-colors" />
                   </Link>
                 );
               })}
             </div>
           </div>
 
-          {/* 推奨施策 */}
-          <div>
-            <p className="text-dark/40 text-[11px] font-bold tracking-wider uppercase mb-3">
-              次期推奨施策
-            </p>
-            <div className="space-y-2">
-              {report.recommendations.map((rec) => (
-                <div
-                  key={rec.priority}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-dark/[0.025]"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-gold/15 flex items-center justify-center flex-shrink-0">
-                    <span className="text-gold font-bold text-[13px] font-outfit">
-                      {rec.priority}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-dark font-bold text-[13px]">{rec.action}</p>
-                    <p className="text-dark/45 text-[11px]">
-                      対象: {rec.targetCategory} ／ 期待効果: {rec.expectedEffect}
+          {/* 次期推奨施策 + リスク（横並び） */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div>
+              <p className="text-dark/40 text-[10px] font-bold tracking-wider uppercase mb-2">次期推奨施策</p>
+              <div className="space-y-1.5">
+                {report.recommendations.map((rec) => (
+                  <div key={rec.priority} className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-md bg-gold/15 text-gold font-bold text-[10px] font-outfit flex items-center justify-center flex-shrink-0">{rec.priority}</span>
+                    <p className="text-dark/70 text-[12px]">{rec.action}
+                      <span className="text-dark/35 ml-1">— {rec.expectedEffect}</span>
                     </p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* リスク */}
-          <div>
-            <p className="text-dark/40 text-[11px] font-bold tracking-wider uppercase mb-3">
-              注意すべきリスク
-            </p>
-            <div className="space-y-2">
-              {report.risks.map((risk, i) => (
-                <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl bg-warning/[0.06]">
-                  <AlertTriangle size={13} className="text-warning mt-0.5 flex-shrink-0" />
-                  <p className="text-dark/65 text-[12px] leading-relaxed">{risk}</p>
-                </div>
-              ))}
+            <div>
+              <p className="text-dark/40 text-[10px] font-bold tracking-wider uppercase mb-2">注意リスク</p>
+              <div className="space-y-1.5">
+                {report.risks.map((risk, i) => (
+                  <div key={i} className="flex items-start gap-1.5">
+                    <AlertTriangle size={11} className="text-warning mt-0.5 flex-shrink-0" />
+                    <p className="text-dark/55 text-[11px] leading-snug">{risk}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
